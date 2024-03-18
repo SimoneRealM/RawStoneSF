@@ -1,0 +1,13 @@
+:host { display: table-row }
+
+.cellStyle {
+    padding-bottom: 0px;
+    padding-top: 15px;
+    text-align: center; /* Allineamento orizzontale */
+    vertical-align: middle; /* Allineamento verticale */
+}
+
+.buttonStyle {
+    padding-top: 13px;
+    vertical-align: middle;
+}

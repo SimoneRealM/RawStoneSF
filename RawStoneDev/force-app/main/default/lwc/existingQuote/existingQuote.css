@@ -1,0 +1,30 @@
+.scrollable-table {
+    overflow: auto;
+    max-height: 300px; /* Regola l'altezza massima a tua discrezione */
+}
+
+.cellStyle {
+    padding-bottom: 10px;
+    text-align: center; /* Allineamento orizzontale */
+    vertical-align: middle; /* Allineamento verticale */
+}
+
+.buttonStyle {
+    vertical-align: middle;
+}
+
+.headerStyle {
+    text-align:center;
+}
+
+.customIcon {
+    width: 48px;
+    height: 48px;
+    margin-right: 16px;
+}
+
+.header-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

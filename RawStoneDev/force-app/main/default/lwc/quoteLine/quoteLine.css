@@ -1,0 +1,30 @@
+.cellStyle {
+    padding-bottom: 17px;
+    text-align: center; /* Allineamento orizzontale */
+    vertical-align: middle; /* Allineamento verticale */
+}
+
+/*.quantityStyle{
+    padding-bottom: 10px;
+    text-align: center; /* Allineamento orizzontale */
+    /*vertical-align: middle; /* Allineamento verticale */
+    /*margin-left: 23px;*/
+    /*width: 60px;
+}*/
+
+.buttonStyle {
+    padding-top: 10px;
+    vertical-align: middle;
+}
+
+.headerStyle {
+    text-align:center;
+}
+
+.quantityStyle {
+    padding-bottom: 17px;
+    text-align: center; /* Allineamento orizzontale */
+    vertical-align: middle; /* Allineamento verticale */
+    /*margin-left: 23px;*/
+    width: 60px;
+}

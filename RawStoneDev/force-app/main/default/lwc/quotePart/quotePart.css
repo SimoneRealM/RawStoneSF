@@ -1,0 +1,18 @@
+.quantityStyle {
+    padding-bottom: 10px;
+    text-align: center; /* Allineamento orizzontale */
+    vertical-align: middle; /* Allineamento verticale */
+    /*margin-left: 23px;*/
+    width: 60px;
+}
+
+.cellStyle {
+    padding-bottom: 10px;
+    text-align: center; /* Allineamento orizzontale */
+    vertical-align: middle; /* Allineamento verticale */
+    /*width: 60px;*/
+}
+
+.headerStyle {
+    text-align:center;
+}

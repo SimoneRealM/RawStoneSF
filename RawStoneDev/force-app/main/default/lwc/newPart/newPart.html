@@ -1,0 +1,99 @@
+<template>
+    <td data-label="GameComponent" style="width:8%;" class="cellStyle">
+        <c-find-game-component game={Component} ongameselected={handleGameSelected} onblur={handleFocusOut} oninsertnewgame={handleCreateNewGame}></c-find-game-component>
+    </td>
+    <td data-label="Dimension" style="width:8%; height:max-content" class="cellStyle">                            
+        <lightning-input data-key={newPart.Id}        field-name="Dimension__c" value={newPart.Dimension__c} onchange={handleInputPart}></lightning-input>
+    </td>
+    <td data-label="Printing" style="width:86px;"     class="cellStyle">                         
+        <!--<lightning-input data-key={newPart.Id}        field-name="Printing__c" value={newPart.Printing__c} onchange={handleInputPart}></lightning-input>-->
+        <lightning-combobox data-key={newPart.Id}     field-name="Printing__c" value={newPart.Printing__c} label="" options={printingOptions} onchange={handleInputPart}></lightning-combobox>
+    </td>
+    <td data-label="Material" style="width:86px;"     class="cellStyle">
+        <lightning-input data-key={newPart.Id}        field-name="Material__c" value={newPart.Material__c} onchange={handleInputPart}></lightning-input>
+    </td>
+    <td data-label="Finish" style="width:8%;"         class="cellStyle">
+        <!--<lightning-select data-key={newPart.Id}       field-name="Finish__c" value={newPart.Finish__c}  options={finishValues} onchange={handleInputPart}></lightning-select>-->
+        <lightning-combobox data-key={newPart.Id} label="" field-name="Finish__c" value={newPart.Finish__c} options={finishOptions}  onchange={handleInputPart}></lightning-combobox>
+    </td>
+    <td data-label="Quantity" style="width:86px;"     class="cellStyle">
+        <lightning-input data-key={newPart.Id}        type="number" field-name="Quantity__c" value={newPart.Quantity__c} onchange={handleInputPart}></lightning-input>
+    </td>
+    <td data-label="Remarks" style="width:86px;"      class="cellStyle">
+        <lightning-input data-key={newPart.Id}        field-name="Remark__c" value={newPart.Remark__c} onchange={handleInputPart}></lightning-input>
+    </td>
+    <td data-label="Developing" style="width:5%;"     class="cellStyle">
+        <lightning-input step="0.01" data-key={newPart.Id}        type="number" field-name="DevelopingCNY__c" value={newPart.DevelopingCNY__c} onchange={handleInputPart}></lightning-input>
+    </td>
+    <td data-label="Plate Change" style="width:5%;"   class="cellStyle">
+        <lightning-input step="0.01" data-key={newPart.Id}        type="number" field-name="PlateChangeCNY__c" value={newPart.PlateChangeCNY__c} style="white-space: pre-line"   onchange={handleInputPart}></lightning-input>
+    </td>  
+    <td data-label="Quantity 1" style="width:86px;"   class="cellStyle">
+        <lightning-input step="0.001" data-key={newPart.Id}        class="quantityStyle" type="number" field-name="PriceQ1CNY__c" value={newPart.PriceQ1CNY__c} onchange={handleInputPart}></lightning-input>
+        <!--<lightning-input step="0.001" data-key={newPart.Id}        class="quantityStyle" type="number" field-name="PriceQ1CNY__c" value={newPart.PriceQ1CNY__c} onchange={handleInputPart} required={partRequired.PriceQ1CNY__c.required}></lightning-input>-->
+    </td>   
+    <td data-label="Quantity 2" style="width:86px;"   class="cellStyle"> 
+        <lightning-input step="0.001" data-key={newPart.Id}        class="quantityStyle" type="number" field-name="PriceQ2CNY__c" value={newPart.PriceQ2CNY__c} onchange={handleInputPart}></lightning-input>
+    </td>   
+    <td data-label="Quantity 3" style="width:86px;"   class="cellStyle">
+        <lightning-input step="0.001" data-key={newPart.Id}        class="quantityStyle" type="number" field-name="PriceQ3CNY__c" value={newPart.PriceQ3CNY__c} onchange={handleInputPart}></lightning-input>
+    </td>
+    <td data-label="Quantity 4" style="width:86px;"   class="cellStyle">
+        <lightning-input step="0.001" data-key={newPart.Id}        class="quantityStyle" type="number" field-name="PriceQ4CNY__c" value={newPart.PriceQ4CNY__c} onchange={handleInputPart}></lightning-input>
+    </td>
+    <td data-label="Quantity 5" style="width:86px;"   class="cellStyle">
+        <lightning-input step="0.001" data-key={newPart.Id}        class="quantityStyle" type="number" field-name="PriceQ5CNY__c" value={newPart.PriceQ5CNY__c} onchange={handleInputPart}></lightning-input>
+    </td>  
+    <td data-label="Buttons" style="width:200px;" class="buttonStyle">
+        <div>
+            <lightning-button class="slds-button slds-var-m-right_x-small" variant="brand" label='Clone' onclick={handleClonePart} ></lightning-button>
+            <!--<lightning-button class="slds-button slds-var-m-right_x-small" variant="brand" label='Clone' onclick={handleClonePart} disabled={disableSavePart}></lightning-button>-->
+            <lightning-button icon-name="utility:delete" class="slds-button slds-var-m-right_x-small" onclick={handleDeletePart} variant="destructive" label=''></lightning-button>     
+            <!--<lightning-button icon-name="utility:delete" class="slds-button slds-var-m-right_x-small" onclick={confirmButton} variant="destructive" disabled     label=''></lightning-button>-->     
+            <!--<lightning-button icon-name="utility:check"  class="slds-button slds-var-m-right_x-small" onclick={handleSavePart} style="background-color:green;" disabled={disableSavePart} label=''></lightning-button>-->
+        </div>      
+    </td>
+
+
+    <template if:true={showModal}>
+        <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+        <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open slds-modal_large">
+            <div class="slds-modal__container" style="margin-bottom: 15px; text-align:center; font-size:17px; width:50%">
+                <lightning-modal-body>
+                    <h1 class="slds-var-p-horizontal_small">
+                        You are entering a new game named <b>{newGame.Name}</b>. Is this correct?
+                    </h1>
+                    <br>
+                    <lightning-button class="slds-button slds-var-m-left_x-small" variant="destructive" label="No" onclick={closeCreateNewGame}></lightning-button>                
+                    <lightning-button class="slds-button slds-var-m-left_x-small" variant="brand"       label="Yes" onclick={insertNewGame}></lightning-button>
+                </lightning-modal-body>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+    </template>
+
+    <template if:true={showConfirm}>
+        <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+        <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open slds-modal_large">
+            <div class="slds-modal__container" style="margin-bottom: 15px; text-align:center; font-size:17px; width:50%">
+                <lightning-modal-body>
+                    <h1 class="slds-var-p-horizontal_small">Are you sure? </h1><br>
+                    <lightning-button class="slds-button slds-var-m-left_x-small" variant="destructive" label="No" onclick={handleNotSure}></lightning-button>                
+                    <lightning-button class="slds-button slds-var-m-left_x-small" variant="brand"       label="Yes" onclick={handleDeletePart}></lightning-button>
+                </lightning-modal-body>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+    </template>
+
+    <template if:true={spinner}>
+        <div class="exampleHolder">
+            <lightning-spinner alternative-text="Loading" size="xx-small"></lightning-spinner>
+        </div>
+    </template> 
+
+    <!--<template if:true={showNewClonedPart}>
+        <c-new-part new-part={clonedPart} quote-id={quoteId} box-id={boxId} key-part={reactiveKeyPart} oncreatesinglepart={handleSaveAllNewParts}></c-new-part>
+    </template>-->
+            
+</template>

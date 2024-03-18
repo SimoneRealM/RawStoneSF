@@ -1,0 +1,105 @@
+<!-- sldsValidatorIgnore -->
+<template>
+	<template if:true={showOptions}>
+        <lightning-input field-name="component" value={game} onchange={handleChange}></lightning-input><!-- onblur={handleChangeGame}></lightning-input>-->
+        <!--<lightning-input field-name="component" value={game} onblur={handleFocusOut} onchange={handleChange}></lightning-input>-->
+        <!--<lightning-input label="input text" type="search" onchange={handleChange} value={game} style="border:0px; top:13px" class="slds-box slds-box_x-small -m-top_small" name="enter-search" variant="label-hidden" required="true"></lightning-input>-->
+    </template>
+
+    <template if:false={showOptions}>
+        <lightning-input label="input text" class="cellStyle" type="search" onchange={handleChange} value={selectedValue} name="enter-search" variant="label-hidden"></lightning-input>
+    </template>						
+					
+    <template if:true={showDataList}>
+        <div class="slds-dropdown slds-dropdown_length-5 " style="text-align: center;border-left-width: 1px;margin-left: 58px;margin-top: 25px; border-radius: 10px" role="listbox">
+            <ul class="slds-listbox slds-listbox_vertical" role="presentation">
+                <template for:each={gameListFiltered} for:item="game">
+                    <li key={game.value} role="presentation" style="padding-right: 34px" class="slds-listbox__item">
+                        <div data-recid={game.value} data-label={game.label} onclick={handleSelection}
+                            class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small" role="option">
+                            <span class="slds-media__figure slds-listbox__option-icon"></span>
+                            <span class="slds-media__body">
+                                <span class="slds-truncate" title={game.label}>
+                                {game.label}
+                                </span>
+                            </span>
+                        </div>
+                    </li>
+                </template>
+            </ul>
+        </div>
+    </template>
+
+    <!--<template if:true={showDataList}>
+			
+        <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+        <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open slds-modal_large">
+            <div class="slds-modal__container">
+
+               
+
+                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse">
+                    <svg class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+                        <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#close"></use>
+                    </svg>
+                    <span class="slds-assistive-text">Cancel and close</span>
+                </button>-->
+                <!--Modal Header Table-->
+                <!--<lightning-modal-header>
+                    <div class="header-container">-->
+                        <!--<img src={iconImageCustom} alt="icon" class="customIcon">-->
+                        <!--<h1 class="header-text">Choose Product</h1>
+                    </div>
+
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={handleDismiss}>
+                        <lightning-icon icon-name="utility:close" alternative-text="close"></lightning-icon>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                </lightning-modal-header>
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">-->
+                    <!--Modal Body Table-->
+                   <!-- <lightning-modal-body>
+                        
+                        <lightning-card  title="Hello">
+                            <lightning-button label="New" slot="actions"></lightning-button>
+                            <div class="slds-dropdown slds-dropdown_length-5 " role="listbox">
+                                <ul class="slds-listbox slds-listbox_vertical" style="margin-left: 209px;margin-bottom: 0px;bottom: 51.500;bottom: -20;bottom: -10;top: -60px;bottom: -120;bottom: 400px;height: 400px;" role="presentation">
+                                    <template for:each={gameList} for:item="game">
+                                        <li key={game.value} role="presentation" class="slds-listbox__item">
+                                            <div data-recid={game.value} onclick={handleSelection}
+                                                class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small" role="option">
+                                                <span class="slds-media__figure slds-listbox__option-icon"></span>
+                                                <span class="slds-media__body">
+                                                    <span class="slds-truncate" title={game.label}>
+                                                    {game.label}
+                                                    </span>
+                                                </span>
+                                            </div>
+                                        </li>
+                                    </template>
+                                </ul>
+                            </div>
+                        </lightning-card>
+                    </lightning-modal-body>
+                    
+                </div>
+                <lightning-modal-footer>
+                    <div class="slds-grid slds-wrap">
+                        <lightning-button variant="neutral" label="Back" onclick={comeBack}></lightning-button>  
+                        <lightning-button class="slds-col slds-float_right" variant="destructive" label="Close" onclick={handleDismiss}></lightning-button>  
+                    </div>
+                </lightning-modal-footer>-->
+                <!--<lightning-modal-footer>
+                    <lightning-button class="slds-button slds-float_left" variant="destructive" label="Close" onclick={handleDismiss}></lightning-button>  
+                    <lightning-button class="slds-button slds-float_left" variant="neutral" label="Indietro" onclick={comeBack}></lightning-button>  
+                </lightning-modal-footer>-->
+            <!--</div>
+            <template if:true={spinnerS3}>
+                <lightning-spinner alternative-text="Loading" size="large"></lightning-spinner>
+            </template>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+
+    </template>-->
+
+</template>

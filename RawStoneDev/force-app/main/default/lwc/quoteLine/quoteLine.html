@@ -1,0 +1,170 @@
+<template>
+    <div class="scrollable-table">
+        <!--BOX TABLE-->
+        <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_fixed-layout">
+            <!--HEADER BOX-->
+            <thead>
+                <tr>
+                    <template for:each={columns} for:item="column">
+                        <th key={column.field} scope="col" class="headerStyle" draggable="true">
+                            <div class="resize-handle" title={column.title}>{column.label}</div>
+                        </th>
+                    </template>
+                </tr>
+            </thead>
+            <!--BODY BOX-->
+            <tbody>
+                <tr style="background-color:#F3F3F3">
+                    <td data-label="Name" class="cellStyle">                            
+                        <lightning-input data-key={record.Id} field-type="text"    data-field-name="name"      value={record.Name}  onchange={handleInputChange}></lightning-input>
+                    </td>
+                    <td data-label="Quantity1" class="cellStyle">                         
+                        <lightning-input data-key={record.Id} field-type="integer" data-field-name="Q1__c"     value={record.Q1__c} onchange={handleInputChange}></lightning-input>
+                    </td>
+                    <td data-label="Quantity2" class="cellStyle">
+                        <lightning-input data-key={record.Id} field-type="integer" data-field-name="quantity2" value={record.Q2__c} onchange={handleInputChange}></lightning-input>
+                    </td>
+                    <td data-label="Quantity3" class="cellStyle">
+                        <lightning-input data-key={record.Id} field-type="integer" data-field-name="quantity3" value={record.Q3__c} onchange={handleInputChange}></lightning-input>
+                    </td>
+                    <td data-label="Quantity4" class="cellStyle">
+                        <lightning-input data-key={record.Id} field-type="integer" data-field-name="quantity4" value={record.Q4__c} onchange={handleInputChange}></lightning-input>
+                    </td>
+                    <td data-label="Quantity5" class="cellStyle">
+                        <lightning-input data-key={record.Id} field-type="integer" data-field-name="quantity5" value={record.Q5__c} onchange={handleInputChange}></lightning-input>
+                    </td>
+                    <td data-label="Buttons" >
+                        <div>
+                            <lightning-button class="slds-button slds-var-m-right_x-small" variant="brand" label='Clone'></lightning-button>
+                            <lightning-button icon-name="utility:delete" class="slds-button slds-var-m-right_x-small" variant="destructive" label=''></lightning-button>                   
+                        </div>      
+                    </td>    
+                </tr>
+            </tbody>
+        </table>
+        <br>
+        
+        <!--PART TABLE-->
+        <!--GENERARE LWC CHILD-->
+        <!--<div class="slds-text-align_left">
+            <template if:false={firstClickOnPart}>
+                <lightning-button variant="brand" label= " + Add Part" onclick={handleCreatePart} class="slds-var-m-left_x-small"></lightning-button>
+                <lightning-button variant="brand" label= "Insert Single Box"  onclick={handleCreatePart} class="slds-var-m-left_x-small"></lightning-button>
+            </template>
+        </div>-->
+        
+        <!--<template if:true={showPartTable}>-->
+            <!--<table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                <thead>
+                    <template for:each={partHeader} for:item="partHeader">
+                        <th key={partHeader.fieldName} scope="col" class="headerStyle" draggable>
+                            <div title={partHeader.label}>{partHeader.label}</div>
+                        </th>
+                    </template>
+                </thead>
+            </table>-->
+            
+            
+            <c-quote-part
+                record={record} key-part={reactiveKeyPart} part-header={partHeader} onupdateheader={handleHeaderChange} header-list=[headerList]
+            ></c-quote-part>
+           
+            <!--<table class="slds-table slds-table_cell-buffer slds-table_bordered">-->
+                <!-- HEADER -->
+                <!--<thead>
+                    <template for:each={partHeader} for:item="partHeader">
+                        <th key={partHeader.fieldName} scope="col" class="headerStyle" draggable>
+                            <div title={partHeader.label}>{partHeader.label}</div>
+                        </th>
+                    </template>
+                </thead>-->
+                <!-- BODY -->
+                <!--<tbody>
+                    <template for:each={partList} for:item="part">
+                        <c-quote-part
+                            key={part.Id} 
+                            single-part={part}
+                            part-header={partHeader}
+                        ></c-quote-part>
+                    </template>
+                </tbody>-->
+                <!--<tbody>
+                    <template for:each={listPart} for:item="singlePart">
+                        <tr key={singlePart.Id} style="background-color:#F3F3F3">-->
+                            <!--<c-quote-part key={singlePart.Id} single-part={singlePart}></c-quote-part>-->
+                            <!--<td data-label="Dimension">                            
+                                <lightning-input data-key={singlePart.Id} class="cellStyle" field-name="dimension" value={singlePart.Dimension__c} onchange={handleInputChangePart}></lightning-input>
+                            </td>
+                            <td data-label="Printing">                         
+                                <lightning-input data-key={singlePart.Id}  class="cellStyle" field-type="integer" field-name="printing" value={singlePart.Printing__c} onchange={handleInputChangePart}></lightning-input>
+                            </td>
+                            <td data-label="Material">
+                                <lightning-input data-key={singlePart.Id}  class="cellStyle" field-type="integer" field-name="material" value={singlePart.Material__c} onchange={handleInputChangePart}></lightning-input>
+                            </td>
+                            <td data-label="Finish">
+                                <lightning-input data-key={singlePart.Id}  class="cellStyle" field-type="integer" field-name="finish" value={singlePart.Finish__c} onchange={handleInputChangePart}></lightning-input>
+                            </td>
+                            <td data-label="Quantity">
+                                <lightning-input data-key={singlePart.Id}  class="cellStyle" field-name="quantity" value={singlePart.Quantity__c} onchange={handleInputChangePart}></lightning-input>
+                            </td>
+                            <td data-label="Remarks">
+                                <lightning-input data-key={singlePart.Id}  class="cellStyle" field-name="remarks" value={singlePart.Remark__c} onchange={handleInputChangePart}></lightning-input>
+                            </td>
+                            <td data-label="Developing">
+                                <lightning-input data-key={singlePart.Id}  class="cellStyle" field-name="developing" value={singlePart.DevelopingCNY__c} onchange={handleInputChangePart}></lightning-input>
+                            </td>
+                            <td data-label="Plate Change">
+                                <lightning-input data-key={singlePart.Id}  class="cellStyle" field-name="plateChange" value={singlePart.PlateChangeCNY__c} style="white-space: pre-line"   onchange={handleInputChangePart}></lightning-input>
+                            </td>  
+                            <td data-label="Quantity 1">
+                                <lightning-input data-key={singlePart.Id}  class="quantityStyle" field-name="quantity1" value={singlePart.PriceQ1CNY__c} onchange={handleInputChangePart}></lightning-input>
+                            </td>  
+                            <td data-label="Quantity 2" >
+                                <lightning-input data-key={singlePart.Id}  class="quantityStyle" field-name="quantity2" value={singlePart.PriceQ2CNY__c} onchange={handleInputChangePart}></lightning-input>
+                            </td>  
+                            <td data-label="Quantity 3">
+                                <lightning-input data-key={singlePart.Id}  class="quantityStyle" field-name="quantity3" value={singlePart.PriceQ3CNY__c} onchange={handleInputChangePart}></lightning-input>
+                            </td>  
+                            <td data-label="Quantity 4" >
+                                <lightning-input data-key={singlePart.Id}  class="quantityStyle" field-name="quantity4" value={singlePart.PriceQ4CNY__c} onchange={handleInputChangePart}></lightning-input>
+                            </td>  
+                            <td data-label="Quantity 5">
+                                <lightning-input data-key={singlePart.Id}  class="quantityStyle" field-name="quantity5" value={singlePart.PriceQ5CNY__c} onchange={handleInputChangePart}></lightning-input>
+                            </td>  
+                            <td data-label="Buttons" >
+                                <div>
+                                    <lightning-button class="slds-button slds-var-m-right_x-small" variant="brand" label='Clone'></lightning-button>
+                                    <lightning-button  icon-name="utility:delete" class="slds-button slds-var-m-right_x-small" variant="destructive" label=''></lightning-button>
+                                -->
+                                <!--<lightning-button-icon icon-name="utility:recycle_bin" variant="destructive" alternative-text="Delete" class="slds-m-left_xx-small" title="Delete"></lightning-button-icon> -->        
+                                <!--</div>      
+                            </td>
+                        </tr>
+                    </template>
+                </tbody>-->
+            <!--</table>-->
+        <!--</template>-->
+
+        <!--<template if:true={createBox}>
+            <div class="slds-text-align_left">
+                <lightning-button variant="brand" label= " + Add Part" onclick={handleCreatePart} class="slds-var-m-left_x-small"></lightning-button>                
+            </div><br>
+        </template>-->
+
+        <br>
+        <div class="slds-text-align_left">
+            <!--<template if:true={createBox}>-->
+                <lightning-button variant="brand" label= " + Add Part" onclick={handleCreatePart} class="slds-var-m-left_x-small"></lightning-button>
+                <lightning-button variant="brand" label= "Save Single Box"  onclick={handleCreatePart} class="slds-var-m-left_x-small" disabled></lightning-button>
+            <!--</template>-->
+        </div>
+
+        <template if:true={showPartTable}>
+            <c-quote-part key-part={reactiveKeyPart} part-header={partHeader} header-list=[headerList]></c-quote-part>
+        </template>
+
+        
+    </div>
+
+
+</template>

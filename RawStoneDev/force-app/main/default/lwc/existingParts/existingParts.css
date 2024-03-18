@@ -1,0 +1,17 @@
+:host { display: table-row }
+
+.cellStyle {
+    padding-bottom: 19px;
+    text-align: center; /* Allineamento orizzontale */
+    vertical-align: middle; /* Allineamento verticale */
+    text-wrap: wrap;
+}
+
+.buttonStyle {
+    padding-top: 4px;
+    vertical-align: middle;
+}
+
+.modified {
+    background-color: #ffffc2; /* Cambia il colore di sfondo per evidenziare la riga modificata */
+}

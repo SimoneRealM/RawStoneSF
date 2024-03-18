@@ -1,0 +1,214 @@
+<template>
+    <!--<lightning-accordion allow-multiple-sections-open onsectiontoggle={handleSectionToggle} active-section-name={activeSections}>-->
+        <!--<div class="scrollable-table">-->
+        <div>
+            <!--Box Section-->
+
+            <!-- Custom Accordion with logo -->
+            <lightning-layout horizontal-align="left">
+                <template if:false={chevronDownBox}>
+                    <lightning-layout-item style="padding-left: 10px;">
+                        <lightning-icon style="cursor: pointer; height:5rem; padding-bottom: 10px; width: 15px; height: 15px;" icon-name="utility:chevronright" onclick={handleClickBox} size="xx-small"></lightning-icon>
+                    </lightning-layout-item>
+                    <lightning-layout-item style="padding-left: 10px; ">
+                        <lightning-icon style="cursor: pointer; background-color:green" icon-name="custom:custom42" onclick={handleClickBox} size="small"></lightning-icon>
+                    </lightning-layout-item>
+                    <lightning-layout-item>
+                        <h1 style="cursor: pointer; padding-left: 10px; font-size:17px; " onclick={handleClickBox}><strong>{record.Name}</strong></h1>
+                    </lightning-layout-item>
+                </template>
+                <template if:true={chevronDownBox}>
+                    <lightning-layout-item style="padding-left: 10px;">
+                        <lightning-icon style="cursor: pointer; padding-bottom: 10px; width: 15px; height: 15px;" icon-name="utility:chevrondown" onclick={handleClickBox} size="xx-small"></lightning-icon>
+                    </lightning-layout-item>
+                    <lightning-layout-item style="padding-left: 10px;">
+                        <lightning-icon style="cursor: pointer; background-color:green" icon-name="custom:custom42" onclick={handleClickBox} size="small"></lightning-icon>
+                    </lightning-layout-item>
+                    <lightning-layout-item>
+                        <h1 style="cursor: pointer; padding-left: 10px; font-size:17px; " onclick={handleClickBox}><strong>{record.Name}</strong></h1>
+                    </lightning-layout-item>
+                </template>
+            </lightning-layout>
+
+            <!-- Existing Box -->
+            <template if:true={showBox}>
+                <!--Box Table-->
+                <br><table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                    <!--Box Header-->
+                    <thead>
+                        <tr>
+                            <template for:each={columns} for:item="column">
+                                <th key={column.field} scope="col" class="headerStyle" draggable="true">
+                                    <div class="resize-handle" title={column.title}>{column.label}</div>
+                                </th>
+                            </template>
+                        </tr>
+                    </thead>
+                    <!--Box Body-->
+                    <tbody>
+                        <tr style="background-color:#F3F3F3">
+                            <td data-label="Name" class="cellStyle">                            
+                                <lightning-input data-key={record.Id} class="cellStyle" field-type="text"    data-field-name="Name"      value={record.Name}  onchange={handleInputChange}></lightning-input>
+                            </td>
+                            <td data-label="Quantity1" class="cellStyle">                         
+                                <lightning-input data-key={record.Id} class="cellStyle" field-type="number" data-field-name="Q1__c"     value={record.Q1__c} onchange={handleInputChange}></lightning-input>
+                            </td>
+                            <td data-label="Quantity2" class="cellStyle">
+                                <lightning-input data-key={record.Id} class="cellStyle" field-type="number" data-field-name="Q2__c" value={record.Q2__c} onchange={handleInputChange}></lightning-input>
+                            </td>
+                            <td data-label="Quantity3" class="cellStyle">
+                                <lightning-input data-key={record.Id} class="cellStyle" field-type="number" data-field-name="Q3__c" value={record.Q3__c} onchange={handleInputChange}></lightning-input>
+                            </td>
+                            <td data-label="Quantity4" class="cellStyle">
+                                <lightning-input data-key={record.Id} class="cellStyle" field-type="number" data-field-name="Q4__c" value={record.Q4__c} onchange={handleInputChange}></lightning-input>
+                            </td>
+                            <td data-label="Quantity5" class="cellStyle">
+                                <lightning-input data-key={record.Id} class="cellStyle" field-type="number" data-field-name="Q5__c" value={record.Q5__c} onchange={handleInputChange}></lightning-input>
+                            </td>
+                            <td data-label="Buttons" class="buttonStyle" >
+                                <div>
+                                    <lightning-button icon-name="utility:copy" icon-position="center" class="slds-button" alternative="Clone" title="Clone" variant="brand" onclick={handleCloneBox}></lightning-button>
+                                    <lightning-button icon-name="utility:delete" icon-position="center" class="slds-button" alternative="Delete" title="Delete" variant="destructive" onclick={handleDeleteBox}></lightning-button>                   
+                                    <lightning-button icon-name="action:approval" icon-position="center" class="slds-button" alternative="Save" title="Save" variant="brand" disabled={disabledSaveBox} onclick={handleSaveBoxModified}></lightning-button>                        
+                                    <!--<lightning-button icon-name="action:approval" class="slds-button slds-var-m-right_x-small" onclick={confirmButton} label=''></lightning-button>-->                   
+                                </div>      
+                            </td>    
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Save Single Box Modified-->
+                <template if:true={showConfirm}>
+                    <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+                    <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open slds-modal_large">
+                        <div class="slds-modal__container" style="margin-bottom: 15px; text-align:center; font-size:17px; width:50%">
+                            <lightning-modal-body>
+                                    
+                                <h1 class="slds-var-p-horizontal_small">Are you sure? </h1><br>
+                                <lightning-button class="slds-button slds-var-m-left_x-small" variant="destructive" label="No" onclick={hideDocumentSelected}></lightning-button>                
+                                <lightning-button class="slds-button slds-var-m-left_x-small" variant="brand"       label="Yes" onclick={handleSavePart}></lightning-button>
+                                
+                            </lightning-modal-body>
+                            
+                        </div>
+                    </section>
+                    <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+                </template>
+
+                <!--Existing Parts-->
+                <br>
+                <template if:true={showParts}>
+
+                    <!-- Custom Accordion with logo -->
+                    <lightning-layout horizontal-align="left">
+                        <template if:false={chevronDown}>
+                            <lightning-layout-item style="padding-left: 10px;">
+                                <lightning-icon style="cursor: pointer; padding-bottom: 10px; width: 15px; height: 15px;" icon-name="utility:chevronright" onclick={handleClickPart} size="xx-small"></lightning-icon>
+                            </lightning-layout-item>
+                            <lightning-layout-item style="padding-left: 10px;">
+                                <lightning-icon style="cursor: pointer; " icon-name="custom:custom47" onclick={handleClickPart} size="small"></lightning-icon>
+                            </lightning-layout-item>
+                            <lightning-layout-item>
+                                <h1 style="cursor: pointer; padding-left: 10px; font-size:17px; " onclick={handleClickPart}><strong>Parts</strong></h1>
+                            </lightning-layout-item>
+                        </template>
+                        <template if:true={chevronDown}>
+                            <lightning-layout-item style="padding-left: 10px;">
+                                <lightning-icon style="cursor: pointer; padding-bottom: 10px; width: 15px; height: 15px;" icon-name="utility:chevrondown" onclick={handleClickPart} size="xx-small"></lightning-icon>
+                            </lightning-layout-item>
+                            <lightning-layout-item style="padding-left: 10px;">
+                                <lightning-icon style="cursor: pointer; " icon-name="custom:custom47" onclick={handleClickPart} size="small"></lightning-icon>
+                            </lightning-layout-item>
+                            <lightning-layout-item>
+                                <h1 style="cursor: pointer; padding-left: 10px; font-size:17px; " onclick={handleClickPart}><strong>Parts</strong></h1>
+                            </lightning-layout-item>
+                        </template>
+                    </lightning-layout>
+                        
+                    <!-- Table Existing Parts-->
+                    <template if:true={showTableParts}>
+                        <br><table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                            <!-- Existing Part Header -->
+                            <thead>
+                                <tr>
+                                    <template for:each={partHeader} for:item="partHeader">
+                                        <th key={partHeader.fieldName} scope="col" draggable>
+                                            <div class="resize-handle" style="text-align:center" title={partHeader.label}>{partHeader.label}</div>
+                                        </th>
+                                    </template>
+                                </tr>
+                            </thead>
+                            
+                            <!-- Existing Part Body-->
+                            <tbody style="background-color:#F3F3F3">
+                                <template for:each={generateListExistingParts} for:item="newPart">
+                                    <c-existing-parts key={newPart.Id} part-header={partHeader} finish-values={finishValues} printing-values={printingPicklistValues} onupdateallparts={saveAllExistingParts} onrefreshevent={handleRefreshEvent} ondisabledsavebox={handleDisabledBox} onsaveallparts={handleShowSaveAll} existing-part={newPart} quote-id={quoteId} box-id={record.Id} key-part={keyPart} onremove={handleRemoveRow} ondeleteexistingpart={handleDeleteExistingPart}></c-existing-parts>
+                                    <!--<c-existing-parts key={newPart.Id} finish-values={finishValues} existing-part={newPart} quote-id={quoteId} box-id={record.Id} key-part={keyPart} onremove={handleRemoveRow}></c-existing-parts>-->
+                                </template>
+                            </tbody>
+                        </table>
+
+                        <!-- Save New Part-->
+                        <br><div class="slds-text-align_center">
+                            <lightning-button label= "Save All Parts" disabled={hideSaveAllParts} onclick={handleSaveAllExistingParts} onrefreshevent={handleRefreshEvent} class="slds-var-m-left_x-small"></lightning-button>                
+                        </div><br>
+                    </template>
+                        <!--<div class="scrollable-table" >-->
+                        <!--<div>
+                            <c-existing-parts part-header={partHeader} generate-list-existing-parts={generateListExistingParts}></c-existing-parts>
+                        </div>    -->
+                    <!--</lightning-accordion-section>-->
+                </template>
+                <!--Create New Part-->
+                <br>
+                <template if:true={showAddPart}>
+                    <template if:false={hideNewPart}>
+                        <div class="slds-text-align_center">
+                            <lightning-button label= " + Add Part" onclick={handleCreatePart} variant="brand" class="slds-var-m-left_x-small"></lightning-button>                
+                        </div><br>
+                    </template>
+                </template>
+            </template>
+            <br>     
+            
+            <!-- New Part -->
+            <template if:true={showNewParts}> 
+                <!--<div class="scrollable-table" >-->
+                    <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                        <!-- New Part Header -->
+                        <thead>
+                            <tr>
+                                <template for:each={partHeader} for:item="partHeader">
+                                    <th key={partHeader.fieldName} scope="col" draggable>
+                                        <div title={partHeader.label} style="text-align:center">{partHeader.label}</div>
+                                    </th>
+                                </template>
+                            </tr>
+                        </thead>
+                        
+                        <!-- New Part Body-->
+                        <tbody style="background-color:#F3F3F3">
+                            <template for:each={newPartsList} for:item="newPart">
+                                <c-new-part key={newPart.Id} new-part={newPart} part-header={partHeader} printing-values={printingPicklistValues} finish-values={finishValues} onrefreshevent={handleRefreshEvent} quote-id={quoteId} box-id={record.Id} key-part={keyPart} onclonepart={handleClonedNewPart} onsaveallparts={handleShowSaveAll} oncreatesinglepart={handleSaveAllNewParts} onremove={handleRemoveRow} ondeletenewpart={handleDeleteNewPart}></c-new-part>
+                            </template>
+                        </tbody>
+                    </table>
+                <!--</div>-->
+
+                <!-- Save New Part-->
+                <br><div class="slds-text-align_center">
+                    <!-- ETTORE - TODO: inibito per test: disabled={hideSaveAllParts} --><lightning-button label= "Save All New Parts" onclick={handleSaveNewParts} disabled={hideSaveAllParts} onrefreshevent={handleRefreshEvent} class="slds-var-m-left_x-small"></lightning-button>                
+                </div><br>
+            </template>
+
+            <!--<c-existing-quote reactive-key-box={reactiveKeyBox} existing-record={existingRecord} list-part={listPart} columns={columns} record={record} onlistpart={handleReceivePart} onbox={handleReceiveBox}></c-existing-quote>-->
+            
+            <template if:true={spinner}>
+                <div class="exampleHolder">
+                    <lightning-spinner alternative-text="Loading" size="xx-small"></lightning-spinner>
+                </div>
+            </template>   
+
+        </div>
+
+</template>

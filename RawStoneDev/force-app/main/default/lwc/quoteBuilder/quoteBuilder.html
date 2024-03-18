@@ -1,0 +1,63 @@
+<template>
+    <div class="slds-var-m-top_medium slds-var-m-bottom_x-large">
+
+        <!-- qualche campo di quote editabile, markup e discount readOnly in base al profilo -->
+        <!-- Edit Field Quote -->
+        <div class="slds-text-align_left">
+            <div class="slds-m-top_medium slds-m-bottom_x-large">
+                <lightning-record-edit-form object-api-name={objectApiName} record-id={recordId}>
+                    <lightning-input-field  field-name={markupField}       onchange={handleMarkupChanges}> </lightning-input-field>
+                    <lightning-select label="Discount" value={oldDiscount} options={options} onchange={handleChangeDiscount} variant="label-inline" disabled={readOnlyDiscount}></lightning-select>
+                    <lightning-output-field field-name={exchangeRateField} onchange={handleSaveChanges}> </lightning-output-field>
+
+                    <div class="slds-var-m-top_medium" style="margin-top: 40px;">
+                        <lightning-button label=" + Create New Box" onclick={handleCreateBox} variant="brand" class="slds-var-m-left_x-small slds-button_success"></lightning-button>
+                        <template if:true={showSaveChanges}>
+                            <lightning-button variant="brand" type="submit" label="Save Changes" onclick={saveChanges} class="slds-var-m-left_x-small"></lightning-button>
+                        </template> 
+                    </div>
+                </lightning-record-edit-form>
+            </div>
+        </div> <br>
+        
+        <!-- rimuovere scroll -->
+        <!-- Retrieve Existent Boxes and Parts-->
+        <template for:each={fullBox} for:item="record">
+            <div key={record.Id} style="border: 1px solid black; padding: 10px; border-radius: 10px; margin-bottom: 20px; background-color:#F3F3F3;">
+                <c-existing-quote reactive-key-box={reactiveKeyBox} finish-values={finishValues} onrefreshevent={handleRefreshEvent} existing-record={existingRecord} quote-id={recordId} list-part={listPart} columns={columns} record={record} onlistpart={handleReceivePart} onclonedbox={handleClonedBox}></c-existing-quote>
+            </div>
+        </template>
+        
+        <!-- New Boxes and Parts -->
+        <template if:true={createBox}> 
+            <template for:each={newBoxList} for:item="newBox">
+                <div key={newBox.Id} style="border: 1px solid black; padding: 10px; border-radius: 10px; margin-bottom: 20px; background-color:#F3F3F3;">
+                    <!--<c-quote-line reactive-key-box={reactiveKeyBox} class="cellStyle" create-box={createBox} list-part={listPart} columns={columns} record={record} record-list={recordList} onlistpart={handleReceivePart} onbox={handleReceiveBox}></c-quote-line>-->
+                    <!--<c-new-box reactive-key-box={reactiveKeyBox} record-id={recordId} new-box={newBox} class="cellStyle" onlistpart={handleReceivePart} onbox={handleReceiveBox}></c-new-box>-->
+                    <c-existing-quote is-new="true" columns={columns} hide-new-part="true" reactive-key-box={reactiveKeyBox} record-id={recordId} onrefreshevent={handleRefreshEvent} record={newBox} class="cellStyle" quote-id={recordId} onlistpart={handleReceivePart} onbox={handleReceiveBox}></c-existing-quote>
+                    
+                    <!--<c-existing-quote reactive-key-box={reactiveKeyBox} finish-values={finishValues} onrefreshevent={handleRefreshEvent} existing-record={existingRecord} quote-id={recordId} list-part={listPart} columns={columns} record={record} onlistpart={handleReceivePart} onclonedbox={handleClonedBox}></c-existing-quote>-->
+                </div>
+            </template>
+        </template>
+
+        <template if:true={spinner}>
+            <div class="exampleHolder">
+                <lightning-spinner alternative-text="Loading" size="xx-small"></lightning-spinner>
+            </div>
+        </template>
+
+       
+        <!--<template if:true={showClonedBox}> 
+            <div class="slds-var-m-top_medium slds-var-m-bottom_x-large">
+                <div style="border: 1px solid black; padding: 10px; border-radius: 10px; margin-bottom: 20px; background-color:#F3F3F3;">
+                    <c-existing-quote reactive-key-box={reactiveKeyBox} existing-record={existingRecord} list-part={listPart} columns={columns} record={clonedBox} onlistpart={handleReceivePart} onclonedbox={handleReceiveBox}></c-existing-quote>                
+                </div>
+            </div>
+        </template>-->
+        
+    </div>
+
+
+    
+</template>
