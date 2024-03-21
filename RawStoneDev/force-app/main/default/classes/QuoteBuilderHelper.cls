@@ -21,7 +21,7 @@ public with sharing class QuoteBuilderHelper
 			mapReturn.put('PartList', partList);*/
 
 			List<Box__c> boxListTest = [SELECT Id, Name, Q1__c, Q2__c, Q3__c, Q4__c, Q5__c,
-										(SELECT Id, Box__c, Index__c, GameComponent__r.Name, Dimension__c, Printing__c, Material__c, Finish__c, Quantity__c, UnitOfMeasure__c, Remark__c, 
+										(SELECT Id, Box__c, Index__c, GameComponent__r.Name, Dimension__c, Printing__c, PrintingTxt__c, Material__c, Finish__c, FinishTxt__c, Quantity__c, UnitOfMeasure__c, Remark__c, 
 											DevelopingCNY__c, PlateChangeCNY__c, PriceQ1CNY__c, PriceQ2CNY__c, PriceQ3CNY__c, PriceQ4CNY__c, PriceQ5CNY__c 
 											FROM Parts__r ORDER BY Index__c ASC
 										) 
@@ -67,61 +67,101 @@ public with sharing class QuoteBuilderHelper
 			System.debug('newBox: ' + newBox);
 			System.debug('quoteId: ' + quoteId);
 			Map<Object, Object> newBoxMap = (Map<Object, Object>)newBox;
-			List<Part__c> partList = new List<Part__c>();
-			
 			System.debug('newBoxMap: ' + newBoxMap);
-			String name = 'Cloned'.equalsIgnoreCase(context) ? 'New Box Cloned' : (String)newBoxMap.get('Name');
-			Decimal quantity1 = String.isBlank((String.valueOf(newBoxMap.get('Q1__c')))) ? 0 : (Decimal.valueOf(String.valueOf(newBoxMap.get('Q1__c'))));
-			Decimal quantity2 = String.isBlank((String.valueOf(newBoxMap.get('Q2__c')))) ? 0 : (Decimal.valueOf(String.valueOf(newBoxMap.get('Q2__c'))));
-			Decimal quantity3 = String.isBlank((String.valueOf(newBoxMap.get('Q3__c')))) ? 0 : (Decimal.valueOf(String.valueOf(newBoxMap.get('Q3__c'))));
-			Decimal quantity4 = String.isBlank((String.valueOf(newBoxMap.get('Q4__c')))) ? 0 : (Decimal.valueOf(String.valueOf(newBoxMap.get('Q4__c'))));
-			Decimal quantity5 = String.isBlank((String.valueOf(newBoxMap.get('Q5__c')))) ? 0 : (Decimal.valueOf(String.valueOf(newBoxMap.get('Q5__c'))));
-
-			Box__c box = new Box__c
-			(
-				Id = ('Box Modified'.equalsIgnoreCase(context)) ? String.valueOf(newBoxMap.get('Id')) : null,
-				Name  = name,
-				Q1__c = quantity1,
-				Q2__c = quantity2,
-				Q3__c = quantity3,
-				Q4__c = quantity4,
-				Q5__c = quantity5,
-				Quote__c = quoteId
-			);
-			upsert box;
-
-			if(!'Box Modified'.equalsIgnoreCase(context))
+			List<Part__c> partList = new List<Part__c>();
+			if('ClonedBox'.equalsIgnoreCase(context))
 			{
-				if (newBoxMap.containsKey('Parts__r')) 
-				{
-					System.debug('parts: ' + newBoxMap.get('Parts__r'));
-					Decimal index = 0;
-					for(Part__c part: [SELECT Id, Index__c FROM Part__c WHERE QuoteId__c =: quoteId ORDER BY Index__c DESC])
-					{
-						index = part.Index__c;
-					}
-
-					for(Object part: (List<Object>)newBoxMap.get('Parts__r'))
-					{
-						System.debug('part: ' + part);
-						System.debug('index clone: ' + (index + 1));
-						Map<Object, Object> partMap = (Map<Object, Object>) part;
-						partList.add(generateNewPart(part, (String)partMap.get('Id'), box.Id, 'Cloned', index + 1));
-					}
-					System.debug('partList: ' + partList);
-				}
-				if(!partList.isEmpty()) insert partList;
-
-				mapResponse.put('PartList', partList);
+				return cloneBox(newBoxMap);
 			}
-			mapResponse.put('Box', box);
-			mapResponse.put('Status', 200);
+			else 
+			{
+				System.debug('newBoxMap: ' + newBoxMap);
+				String name = 'Cloned'.equalsIgnoreCase(context) ? 'New Box Cloned' : (String)newBoxMap.get('Name');
+				Decimal quantity1 = String.isBlank((String.valueOf(newBoxMap.get('Q1__c')))) ? 0 : (Decimal.valueOf(String.valueOf(newBoxMap.get('Q1__c'))));
+				Decimal quantity2 = String.isBlank((String.valueOf(newBoxMap.get('Q2__c')))) ? 0 : (Decimal.valueOf(String.valueOf(newBoxMap.get('Q2__c'))));
+				Decimal quantity3 = String.isBlank((String.valueOf(newBoxMap.get('Q3__c')))) ? 0 : (Decimal.valueOf(String.valueOf(newBoxMap.get('Q3__c'))));
+				Decimal quantity4 = String.isBlank((String.valueOf(newBoxMap.get('Q4__c')))) ? 0 : (Decimal.valueOf(String.valueOf(newBoxMap.get('Q4__c'))));
+				Decimal quantity5 = String.isBlank((String.valueOf(newBoxMap.get('Q5__c')))) ? 0 : (Decimal.valueOf(String.valueOf(newBoxMap.get('Q5__c'))));
+	
+				Box__c box = new Box__c
+				(
+					Id = ('Box Modified'.equalsIgnoreCase(context)) ? String.valueOf(newBoxMap.get('Id')) : null,
+					Name  = name,
+					Q1__c = quantity1,
+					Q2__c = quantity2,
+					Q3__c = quantity3,
+					Q4__c = quantity4,
+					Q5__c = quantity5,
+					Quote__c = quoteId
+				);
+				upsert box;
+				
+				if(!'Box Modified'.equalsIgnoreCase(context))
+				{
+					if (newBoxMap.containsKey('Parts__r')) 
+					{
+						System.debug('parts: ' + newBoxMap.get('Parts__r'));
+						Decimal index = 0;
+						for(Part__c part: [SELECT Id, Index__c FROM Part__c WHERE QuoteId__c =: quoteId ORDER BY Index__c DESC])
+						{
+							index = part.Index__c;
+						}
+	
+						for(Object part: (List<Object>)newBoxMap.get('Parts__r'))
+						{
+							System.debug('part: ' + part);
+							System.debug('index clone: ' + (index + 1));
+							Map<Object, Object> partMap = (Map<Object, Object>) part;
+							partList.add(generateNewPart(part, (String)partMap.get('Id'), box.Id, context, index + 1));
+						}
+						System.debug('partList: ' + partList);
+					}
+					if(!partList.isEmpty()) insert partList;
+	
+					mapResponse.put('PartList', partList);
+				}
+				mapResponse.put('Box', box);
+				mapResponse.put('Status', 200);
+			}
 		} 
 		catch (Exception e) 
 		{
 			mapResponse.put('Error', e.getMessage());
 			throw new AuraHandledException(e.getMessage());
 		}
+		return mapResponse;
+	}
+
+	public static Map<String, Object> cloneBox(Map<Object, Object> newBoxMap)
+	{
+		System.debug('Clone Box Method Start');
+		Map<String, Object> mapResponse = new Map<String, Object>();
+
+		String boxId = (String)((Map<Object, Object>)(((List<Object>)newBoxMap.get('Parts__r'))[0])).get('Box__c');
+		System.debug('boxId: ' + boxId);
+		Box__c box = [SELECT Id, Name, Q1__c, Q2__c, Q3__c, Q4__c, Q5__c, Quote__c FROM Box__c WHERE Id =: boxId];
+		System.debug('box: ' + box);
+		Box__c boxCloned = box.clone(false, true, false, false);
+		System.debug('boxCloned: ' + boxCloned);
+		insert boxCloned;
+
+        List<Part__c> partListCloned = new List<Part__c>();
+        for(Part__c part: [SELECT Id, Box__c, Index__c, GameComponent__r.Name, Dimension__c, Printing__c, 
+								  Material__c, Finish__c, Quantity__c, UnitOfMeasure__c, Remark__c, DevelopingCNY__c, 
+								  PlateChangeCNY__c, PriceQ1CNY__c, PriceQ2CNY__c, PriceQ3CNY__c, PriceQ4CNY__c, PriceQ5CNY__c 
+							FROM Part__c WHERE Box__c = :box.Id ORDER BY Index__c ASC])
+		{
+            Part__c partChild = part.clone(false, true, false, false);
+            partChild.Box__c = boxCloned.Id;
+            partListCloned.add(partChild);
+        }
+        System.debug('partListCloned: '+ partListCloned);
+        insert partListCloned;
+
+		mapResponse.put('Box', boxCloned);
+		mapResponse.put('Status', 200);
+
+		System.debug('Clone Box Method End');
 		return mapResponse;
 	}
 
@@ -139,7 +179,7 @@ public with sharing class QuoteBuilderHelper
 			//for(Part__c part: [SELECT Id, Index__c FROM Part__c WHERE QuoteId__c =: quoteId ORDER BY Index__c DESC LIMIT 1])
 			for(Part__c part: [SELECT Id, Index__c FROM Part__c WHERE QuoteId__c =: quoteId ORDER BY Index__c DESC LIMIT 1])
 			{
-				index = part.Index__c;
+				//index = part.Index__c;
 				mapPartIndex.put(part.Id, part.Index__c);
 			}
 			System.debug('index: ' + index);
@@ -153,16 +193,18 @@ public with sharing class QuoteBuilderHelper
 				{
 					Map<Object, Object> newPartMap = (Map<Object, Object>)part;
 					System.debug('newPartMap get index: ' + (Decimal)newPartMap.get('Index__c'));
-					if(mapPartIndex.containsKey((String)newPartMap.get('Id')))
+					listParts.add(generateNewPart(part, quoteId, boxId, context, mapPartIndex.get((String)newPartMap.get('Id'))));
+					
+					/*if(mapPartIndex.containsKey((String)newPartMap.get('Id')))
 					{
 						listParts.add(generateNewPart(part, quoteId, boxId, context, mapPartIndex.get((String)newPartMap.get('Id'))));
 					}
 					else 
 					{
 						System.debug('dentro else');
-						listParts.add(generateNewPart(part, quoteId, boxId, context, index + i));
-					}
-					i++;
+						listParts.add(generateNewPart(part, quoteId, boxId, context, mapPartIndex.get((String)newPartMap.get('Id'))));
+					}*/
+					///i++;
 				}
 				System.debug('listParts:' + listParts);
 				upsert listParts;
@@ -221,7 +263,7 @@ public with sharing class QuoteBuilderHelper
 				String nameGameComponent = (String)gameComponentMap.get('Name');
 				System.debug('nameGameComponent: ' + nameGameComponent);
 				part.GameComponent__c =  gameComponentId;
-				part.index__c = index;
+				//part.index__c = index;
 			}
 			else 
 			{
@@ -268,8 +310,8 @@ public with sharing class QuoteBuilderHelper
 			System.debug('index: ' + index);
 			
 			//if(index == null || 'SaveAllNewParts'.equalsIgnoreCase(context)) part.Index__c = (Decimal)newPartMap.get('Index__c');
-			if((index == null || 'SaveAllNewParts'.equalsIgnoreCase(context)) && (!'Cloned'.equalsIgnoreCase(context))) { part.Index__c = (Decimal)newPartMap.get('Index__c'); }
-			
+			//if((index == null || 'SaveAllNewParts'.equalsIgnoreCase(context)) && (!'Cloned'.equalsIgnoreCase(context))) { part.Index__c = (Decimal)newPartMap.get('Index__c'); }
+			part.Index__c = (Decimal)newPartMap.get('Index__c');
 			part.Box__c =            boxId;
 		} 
 		catch (Exception e) 
@@ -300,16 +342,27 @@ public with sharing class QuoteBuilderHelper
 	}
 
 	@AuraEnabled
-	public static Map<String, Object> deletePart(String partIdToDelete)
+	public static Map<String, Object> deletePart(String partIdToDelete, Object boxId)
 	{
 		System.debug('deletedeletePartBox Start Method.');
 		Map<String, Object> mapResponse = new Map<String, Object>();
 		try 
 		{
+			System.debug('box Id: ' + boxId);
 			System.debug('partIdToDelete: ' + partIdToDelete);
 			Part__c boxToDelete = new Part__c(Id = partIdToDelete);
 			delete boxToDelete;
-			//mapResponse.put('Box', box);
+
+			Id idBox = (Id)boxId;
+
+			List<Part__c> partList = [SELECT Id, Index__c FROM Part__c WHERE Box__c =: idBox ORDER BY Index__c ASC];
+			for(integer i=0; i<partList.size(); i++)
+			{
+				partList[i].Index__c = i;
+			}
+			update partList;
+			System.debug('partList: ' + partList);
+
 			mapResponse.put('Status', 200);
 		} 
 		catch (Exception e) 
@@ -379,6 +432,7 @@ public with sharing class QuoteBuilderHelper
 	@AuraEnabled
 	public static Object createNewGameFromPart(Object gameListToInsert, String quoteId, String boxId, String context)
 	{
+		System.debug('createNewGameFromPart - context: ' + context);
 		Map<Object, Object> partMapToUpdate = new Map<Object, Object>();
 		Map<String, Object> mapPartProduct = new Map<String, Object>();
 		Map<String, String > mapPartIdProduct = new Map<String, String>();
@@ -473,24 +527,6 @@ public with sharing class QuoteBuilderHelper
 				listNewPart.add(partMapToUpdate);
 				System.debug('listNewPart: ' + listNewPart);
 			}
-			/*for(Object obj: mapPartIdProduct.KeySet())
-			{
-				Map<String, Object> mapPartProductName = (Map<String, Object>)obj;
-				Object partToUpdate = mapPartProductName.get(product.Name);
-				if (partToUpdate != null) 
-				{
-					partMapToUpdate = (Map<Object, Object>)partToUpdate;
-					System.debug('partMapToUpdate: ' + partMapToUpdate);
-					Map<Object, Object> gameComponent = (Map<Object, Object>)partMapToUpdate.get('GameComponent__r');
-					gameComponent.put('Id', product.Id);
-					System.debug('gameComponent: ' + gameComponent);
-					partMapToUpdate.put('Component', gameComponent.get('Id'));
-					System.debug('partMapToUpdate: ' + partMapToUpdate);
-					listNewPart.add(partMapToUpdate);
-					System.debug('listNewPart: ' + listNewPart);
-				}
-			}*/
-			
 			
 			System.debug('partMapToUpdate: ' + partMapToUpdate);
 			mapResponse = saveNewPart(listNewPart, quoteId, boxId, context);
