@@ -156,6 +156,8 @@ export default class ExistingQuote extends NavigationMixin(LightningElement)
             { label: '',                                                                        fieldName: 'buttons',           type: 'button',    editable: false},
         ];
 
+        this.lengthPart = this.generateListExistingParts.length;
+        console.log('this.lengthPart: ', this.lengthPart);
     }
 
     generateListParts()
@@ -170,21 +172,26 @@ export default class ExistingQuote extends NavigationMixin(LightningElement)
 		this.updatedPartList = [...this.generateListExistingParts];
     }
 
+    @track index;
     @track showNewParts = false;
     @track newPartsList = [];
     keyPart = 0;
     hideSaveAllParts = true;
+    @track lengthPart;
     handleCreatePart()
     {
         console.log('Click on Add Part');
         this.keyPart++;
-        
+        console.log('Existing Quote - key part:', this.keyPart);
         this.showNewParts = true;
         this.showRecordVoid = true;
 
+        console.log('generateListExistingParts length: ' + this.generateListExistingParts.length );
+    
+        let indexValue = !this.index ? 0 : this.index; 
         const newPart = {
             Id: 'Part ' + this.keyPart,
-            Index__c: this.generateListExistingParts.length == 0 ? this.keyPart : this.generateListExistingParts.length + this.keyPart,
+            Index__c: indexValue,
             Component: '',
             Dimension__c: '',
             Printing__c: '',
@@ -201,7 +208,7 @@ export default class ExistingQuote extends NavigationMixin(LightningElement)
             PriceQ5CNY__c: 0
         };
         console.log('newPart:', newPart);
-        
+
         this.newPartsList = [...this.newPartsList, newPart];
         console.log('handleCreatePart - newPartsList:', this.newPartsList);
         
@@ -241,29 +248,6 @@ export default class ExistingQuote extends NavigationMixin(LightningElement)
         console.log('newProducts:', this.newProducts);
 
         if(!this.gameSelected) { this.selectedPart = ''; }
-      
-		/*this.updatedPartList = this.generateListExistingParts.map(singlePart => 
-		{
-			console.log('singlePart.Id:', singlePart.Id);
-			console.log('existingPart.Id:', existingPart.Id);
-			console.log('singlePart:', singlePart);
-			console.log('existingPart:', existingPart);
-		
-			if (singlePart.Id === existingPart.Id) 
-			{
-				return {
-					...singlePart,
-					...existingPart
-				};
-			}
-			return singlePart;
-		});
-		
-        DISABILITATO MOMENTANEAMENTE PERCHE' INSERISCE SUBITO IL NUOVO PRODOTTO A VIDEO, PRIMA DEL SAVE
-        if (!this.generateListExistingParts.some(part => part.Id === existingPart.Id)) {
-			updatedPartList.push(existingPart);
-        }
-        */
 
        console.log('idMap:', this.idMap);
        // Popola l'oggetto con gli elementi esistenti
@@ -350,7 +334,8 @@ export default class ExistingQuote extends NavigationMixin(LightningElement)
         
         const newPart = {}
         
-        switch (context) {
+        switch (context) 
+        {
             case 'delete':
                 this.generateListExistingParts = this.generateListExistingParts.filter(part => part.Id !== recordId);
                 this.showParts = this.generateListExistingParts.length > 0 ? true : false;
@@ -381,6 +366,8 @@ export default class ExistingQuote extends NavigationMixin(LightningElement)
                 this.generateListExistingParts = [...this.generateListExistingParts];
                 break;
         }
+
+        this.handleReloadPage();
 
     }
 
@@ -718,23 +705,23 @@ export default class ExistingQuote extends NavigationMixin(LightningElement)
     {
         let newSinglePart = event.detail.newSinglePart;
         this.newProducts = event.detail.newProduct;
+        this.index = event.detail.index;
 		console.log('newProducts:', this.newProducts);
 		console.log('newSinglePart:', newSinglePart);
 		console.log('record id:', this.record.Id);
 		console.log('newPartsList:', this.newPartsList);
         newSinglePart.boxId = this.record.Id;
-        
-		/*****************************************************************************************************/
 
 		// Popola l'oggetto con gli elementi esistenti
 		this.updatedPartList.forEach(singlePart => {
+            console.log('singlePart:', singlePart);
 			// Verifica se l'ID è già presente in idMap
 			if (!this.idMap[singlePart.Id]) {
 				// Se non è presente, aggiungi l'elemento a idMap
 				this.idMap[singlePart.Id] = singlePart;
 			}
 		});
-        
+        console.log('this.updatedPartList:', this.updatedPartList);
 		// Aggiungi o aggiorna l'elemento esistente
 		this.idMap[newSinglePart.Id] = {
             ...this.idMap[newSinglePart.Id],
@@ -742,32 +729,8 @@ export default class ExistingQuote extends NavigationMixin(LightningElement)
 		};
 		
 		this.updatedPartListTemp = this.idMap;
-        console.log('List Parts With New:', this.updatedPartListTemp);
-        console.log('Is New Product?', this.newProducts);
-        console.log('newPartsList:', this.newPartsList);
-
-		/**************************************************************************************************** */
-
-        /*if(!this.newProducts)
-        {
-            //if(this.newPartsList.some(part => this.hasNullOrUndefinedOrEmptyComponent(part)))
-            //if(this.newPartsList.some(part => this.checkGameExistingRecord(part)))
-            //if(this.updatedPartListTemp.some(part => this.checkGameExistingRecord(part)))
-            if (Object.values(this.updatedPartListTemp).some(part => this.checkGameExistingRecord(part))) //converto prima in una lista
-            {
-                this.hideSaveAllParts = true;
-            }
-            else 
-            {
-                this.hideSaveAllParts = false;
-            }
-        }
-        else
-        {
-            this.hideSaveAllParts = false;
-        }*/
+       
         this.isNewPart = true;
-        console.log('Is New Part?', this.isNewPart);
         
         // Verifica se newPartsList contiene un elemento con lo stesso Id di newSinglePart
         const indexToUpdate = this.newPartsList.findIndex(part => part.Id === newSinglePart.Id);
@@ -781,13 +744,6 @@ export default class ExistingQuote extends NavigationMixin(LightningElement)
             this.newPartsList.push(newSinglePart);
         }
         console.log('newPartsList:', this.newPartsList);
-
-        //COMMENTATO 23 GENNAIO
-        //controllo se la lista delle nuove parti contiene una part con component vuoto
-        /*if (this.newPartsList.some(part => (!part.Component && !part.GameComponent__c) )) 
-        {
-            this.hideSaveAllParts = true; 
-        }*/
 
         if (this.newPartsList.some(part => {
             console.log('Component:', part.Component);
@@ -829,19 +785,19 @@ export default class ExistingQuote extends NavigationMixin(LightningElement)
     handleCloneBox(event)
     {
         this.spinner = true;
-        this.context = 'Cloned';
+        this.context = 'ClonedBox';
         this.reactiveKeyBox++;
-      
+        console.log('record cloned:', this.record);
         const clonedRow = { ...this.record };
         
         // Assegna un ID provvisorio alla riga clonata
         clonedRow.Id = 'Box ' + this.reactiveKeyBox; 
         
         this.clonedBox = clonedRow;
+        console.log('clonedBox:', this.clonedBox);
         
         this.showClonedBox = true;
 
-        
         this.spinner = true;
         saveNewBox({newBox : this.clonedBox, quoteId : this.quoteId, context : this.context}).then(result =>
         {      
@@ -922,9 +878,13 @@ export default class ExistingQuote extends NavigationMixin(LightningElement)
     }
 
     @track clonedPart = {};
+    
     handleClonedNewPart(event)
     {
-        this.clonedPart = event.detail;
+        this.clonedPart = event.detail.clonedPart;
+        this.reactiveKeyPart = event.detail.reactiveKeyPart;
+        //this.keyPart = event.detail.keyPart;
+       
         this.newPartsList = [...this.newPartsList, this.clonedPart];
         console.log('List Part with cloend part:', this.newPartsList);
     }
@@ -937,13 +897,43 @@ export default class ExistingQuote extends NavigationMixin(LightningElement)
 
     handleDeleteNewPart(event)
     {
-        const partId = event.detail.partId
+        const partId = event.detail.partId;
+
+        //rimuovo l'elemento cancellato dal new part dalla lista che viene visualizzata fe
         this.newPartsList = this.newPartsList.filter(item => item.Id !== partId);
-        console.log('list without new part:', this.newPartsList);
-        
+        console.log('new part list: ', this.newPartsList);
+
+        //rimuovo l'elemento cancellato dal new part dalla lista che viene inviata all'apex
+        delete this.updatedPartListTemp[partId];
+
         this.newPartsList.length === 0 ? this.showNewParts = false : true;
+
+        //Devo riordinare l'index affinchè siano sequenziali
+        this.newPartsList.forEach((elemento, indice) => {
+            elemento.Index__c = this.lengthPart + indice; // Modifica la chiave Index__c sequenzialmente
+        });
+
+        // Ottieni le chiavi dell'oggetto JSON
+        let partListTempKeys = Object.keys(this.updatedPartListTemp);
+        
+        let updatedListCopy = {}; // Creazione di una nuova copia dell'oggetto
+        for (let i = 0; i < partListTempKeys.length; i++) 
+        {
+            let key = partListTempKeys[i];
+            if (this.updatedPartListTemp[key]) 
+            { 
+                let updatedObjectCopy = { ...this.updatedPartListTemp[key] }; // Creazione di una copia dell'oggetto corrente
+                updatedObjectCopy.Index__c = i; // Aggiornamento del valore Index__c nella copia
+                updatedListCopy[key] = updatedObjectCopy; // Assegnazione della copia all'oggetto aggiornato
+            } else {
+                console.error(`Oggetto con chiave ${key} non trovato.`);
+            }
+        }
+        this.updatedPartListTemp = updatedListCopy; 
     }
     
+
+    //check se rimuovere questo metodo che non viene richiamato.
     handleDeleteExistingPart(event)
     {
         const existingPartId = event.detail.existingPartId;
